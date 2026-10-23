@@ -23,6 +23,10 @@ export default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${api_key}`,
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Origin': 'https://app.checkcred.com.br',
+        'Referer': 'https://app.checkcred.com.br/',
       },
       body: JSON.stringify({
         produtoId: String(produto_id),
