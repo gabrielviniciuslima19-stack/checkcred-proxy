@@ -37,6 +37,30 @@ export default async function handler(req, res) {
 
     const data = await checkcredResponse.text();
 
+    if (checkcredResponse.status === 403 && data.includes('IP não liberado')) {
+      let outboundIp = 'desconhecido';
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipJson = await ipRes.json();
+        outboundIp = ipJson.ip;
+      } catch (e) {
+        try {
+          const ipRes2 = await fetch('https://ifconfig.me/ip');
+          outboundIp = (await ipRes2.text()).trim();
+        } catch (e2) {
+          try {
+            const ipRes3 = await fetch('https://api64.ipify.org?format=json');
+            const ipJson3 = await ipRes3.json();
+            outboundIp = ipJson3.ip;
+          } catch (e3) {}
+        }
+      }
+      return res.status(403).json({
+        error: 'IP não liberado para esta conta. Contate o suporte da Checkcred e informe o IP do servidor: ' + outboundIp,
+        server_ip: outboundIp,
+      });
+    }
+
     return res.status(checkcredResponse.status).setHeader('Content-Type', 'application/json').send(data);
   } catch (err) {
     return res.status(500).json({ error: err.message });
